@@ -16,7 +16,7 @@ orgaC.getAll = (function (req, res) {
 orgaC.anniadirOrganizacion = (function (req, res) {
     var obj = new OrganizacionModel({
         nombre: req.body.nombre,
-        telefono: req.body.descripcion_ley,
+        telefono: req.body.telefono,
         direccion: req.body.direccion
     });
     obj.save(function (err) {
