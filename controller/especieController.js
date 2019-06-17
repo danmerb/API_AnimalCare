@@ -14,6 +14,26 @@ especieC.getAll = (function (req, res) {
     })
 })
 
+especieC.getEspecie = (function (req, res) {
+    especieModel.find({nombreEspecie: req.params.nombreEspecie}, function (err, datos) {
+        if (err) {
+            res.status(500).json({ status: 500, err });
+        } else {
+            res.status(200).json(datos);
+        }
+    })
+})
+
+especieC.getRaza = (function (req, res) {
+    especieModel.find({nombreEspecie: req.params.nombreEspecie, raza: {$elemMatch: {nombreRaza: req.params.nombreRaza}}}, function (err, datos) {
+        if (err) {
+            res.status(500).json({ status: 500, err });
+        } else {
+            res.status(200).json(datos);
+        }
+    })
+})
+
 especieC.anniadirEspecie = (function (req, res) {
     var obj = new especieModel({
         nombreEspecie: req.body.nombreEspecie,
@@ -57,18 +77,41 @@ especieC.anniadirRaza = (function (req, res) {
     );
 });
 
-especieC.anniadirEnfermedades = (function (req, res) {
-    var obj = {
-        nombreEnfermedad: req.body.nombreEnfermedad,
-        descripcionEnfermedad: req.body.descripcionEnfermedad,
-    };
-    especieModel.findOneAndUpdate(
-        {nombreEspecie:req.params.nombreEspecie},
-        {raza: {$elementMatch: {nombreRaza: req.params.nombreRaza}}}
-        ,
+especieC.nuevaEnfermedad = (function (req, res) {
+    var nombreRaza = req.params.nombreRaza;
+    var obj={
+        nombreEnfermedad : req.body.nombreEnfermedad,
+        descripccionEnfermedad : req.body.descripccionEnfermedad
+    }
+    especieModel.update(
+        {nombreEspecie: req.params.nombreEspecie, raza: {$elemMatch: {nombreRaza: nombreRaza}}},
         {
             $push: {
-                enfermedades : obj
+                'raza.$.enfermedades' : obj
+            }
+        },
+        { safe: true, upsert: true, new: true },
+        function (err, model) {
+            if (err) {
+                res.status(500).json({ msj: 'No se pudo insertar ', err, status: 500 });
+            } else {
+                res.status(200).json({ status: 200, model });
+            }
+        }
+    );
+});
+
+especieC.nuevaAlimentacion = (function (req, res) {
+    var nombreRaza = req.params.nombreRaza;
+    var obj={
+        peso : req.body.peso,
+        cantidadDevecesAlDia : req.body.cantidadDevecesAlDia
+    }
+    especieModel.update(
+        {nombreEspecie: req.params.nombreEspecie, raza: {$elemMatch: {nombreRaza: nombreRaza}}},
+        {
+            $push: {
+                'raza.$.alimentacion' : obj
             }
         },
         { safe: true, upsert: true, new: true },

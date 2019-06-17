@@ -6,6 +6,8 @@ var logger = require('morgan');
 var mongoose= require('mongoose');
 
 var especieRouter = require('./routes/especie');
+var leyRouter = require('./routes/ley');
+var organizacionRouter = require('./routes/organizacion');
 
 var app = express();
 
@@ -20,6 +22,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/especie', especieRouter);
+app.use('/ley', leyRouter);
+app.use('/organizacion', organizacionRouter);
+
 
 mongoose.connect('mongodb://root:1234root@ds235947.mlab.com:35947/appmascotas', {
   useNewUrlParser:true
