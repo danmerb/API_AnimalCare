@@ -25,7 +25,7 @@ especieC.getEspecie = (function (req, res) {
 })
 
 especieC.getRaza = (function (req, res) {
-    especieModel.find({nombreEspecie: req.params.nombreEspecie, raza: {$elemMatch: {nombreRaza: req.params.nombreRaza}}}, function (err, datos) {
+    especieModel.findOne({nombreEspecie: req.params.nombreEspecie, raza: {$elemMatch: {nombreRaza: req.params.nombreRaza}}}, function (err, datos) {
         if (err) {
             res.status(500).json({ status: 500, err });
         } else {
